@@ -1,0 +1,44 @@
+{
+  "formatVersion": 1,
+  "bundleVersion": "sample-1",
+  "createdUtc": "2026-09-09T06:14:17Z",
+  "sourceLabel": "csv:Localize",
+  "sourceLanguage": "Korean",
+  "fallbackBaked": true,
+  "languages": [
+    {
+      "id": "Korean",
+      "displayName": "한국어",
+      "bcp47": "ko",
+      "fallbackId": null,
+      "fontAddress": null,
+      "file": "Korean.json",
+      "entryCount": 17,
+      "hash": "e52a913fde5b1356ad1fc909a3379311311b6e5341aa1f86ebce3ec0acdba397"
+    },
+    {
+      "id": "English",
+      "displayName": "English",
+      "bcp47": "en",
+      "fallbackId": "Korean",
+      "fontAddress": null,
+      "file": "English.json",
+      "entryCount": 17,
+      "hash": "6f74f5a104db61a70c7d5df1e6039d4369c2184f41ae96b87cd974b9895cdc71"
+    },
+    {
+      "id": "Japanese",
+      "displayName": "日本語",
+      "bcp47": "ja",
+      "fallbackId": "English",
+      "fontAddress": null,
+      "file": "Japanese.json",
+      "entryCount": 17,
+      "hash": "5066c4587fe80b44825f93749c8125033954f2109b85dd7f437bc26ae6db377e"
+    }
+  ],
+  "tables": [
+    "ShipData",
+    "SkillData"
+  ]
+}

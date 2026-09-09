@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <RootNamespace>Translation</RootNamespace>
+    <AssemblyName>Translation.Core</AssemblyName>
+    <LangVersion>9.0</LangVersion>
+    <Nullable>disable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>CS1591</NoWarn>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <Description>엔진과 데이터 소스에 독립적인 번역 SDK 코어. 외부 의존성 없음</Description>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+
+  <!-- 소스 정본은 Unity 패키지 안에 있다. Unity는 폴더 밖 파일을 컴파일할 수 없어서
+       Unity 쪽을 정본으로 두고 .NET 빌드가 그것을 참조한다. 사본이 생기지 않는다. -->
+  <ItemGroup>
+    <Compile Include="..\..\Packages\com.translation.unity\Runtime\Core\**\*.cs" LinkBase="Core" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,82 @@
+# .NET
+bin/
+obj/
+dist/
+nupkg/
+*.nupkg
+*.snupkg
+*.tgz
+*.user
+
+# Unity
+[Ll]ibrary/
+[Tt]emp/
+[Ll]ogs/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Uu]serSettings/
+[Mm]emoryCaptures/
+[Rr]ecordings/
+ServerData/
+**/[Aa]ssets/[Ss]treamingAssets/aa/
+**/[Aa]ssets/[Ss]treamingAssets/aa.meta
+**/[Aa]ssets/AssetStoreTools*
+**/[Aa]ssets/Plugins/Editor/JetBrains*
+**/[Aa]ssets/TutorialInfo/
+**/[Aa]ssets/TutorialInfo.meta
+**/[Aa]ssets/Readme.asset
+**/[Aa]ssets/Readme.asset.meta
+sysinfo.txt
+crashlytics-build.properties
+.vsconfig
+
+# Unity 생성 IDE 파일
+*.csproj
+*.sln
+*.suo
+*.tmp
+*.svd
+*.pidb
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+*.unityproj
+*.unityproxy
+*.booproj
+
+# 빌드 산출물
+*.apk
+*.aab
+*.ipa
+*.app
+*.unitypackage
+*.unitypackage.meta
+
+# IDE / OS
+.vs/
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# 비밀값
+secrets/
+credentials.json
+client_secret*.json
+*service-account*.json
+*serviceaccount*.json
+token.json
+*.p12
+*.pem
+*.pfx
+.env
+.env.*
+
+# 예외: .NET 솔루션과 Tools 프로젝트
+!/Translation.Sdk.sln
+!/Tools/**/*.csproj

@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <RootNamespace>Translation.GoogleSheets</RootNamespace>
+    <AssemblyName>Translation.Sources.GoogleSheets</AssemblyName>
+    <LangVersion>9.0</LangVersion>
+    <Nullable>disable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>CS1591</NoWarn>
+    <Description>구글 스프레드시트를 게임 DB 또는 번역 DB로 쓰는 어댑터. 에디터와 CLI 전용</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.Apis.Sheets.v4" Version="1.68.0.3421" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Translation.Core\Translation.Core.csproj" />
+  </ItemGroup>
+
+</Project>

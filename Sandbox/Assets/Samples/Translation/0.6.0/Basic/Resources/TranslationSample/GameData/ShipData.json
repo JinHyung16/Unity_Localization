@@ -1,0 +1,5 @@
+[
+  { "Id": 1, "Name": "배틀크루저", "Description": "함대의 기본 전열함. 균형 잡힌 성능.", "Grade": "Rare", "Power": 1200 },
+  { "Id": 2, "Name": "프리깃",     "Description": "빠르고 가벼운 호위함.",             "Grade": "Rare", "Power": 640 },
+  { "Id": 3, "Name": "드레드노트", "Description": "느리지만 화력이 압도적인 주력함.",   "Grade": "Epic", "Power": 3100 }
+]

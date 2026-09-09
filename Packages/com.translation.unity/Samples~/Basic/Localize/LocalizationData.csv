@@ -1,0 +1,9 @@
+LocalKey,Korean,English,Japanese,_State
+Common_Confirm,확인,OK,確認,
+Common_Cancel,취소,Cancel,キャンセル,
+Title_Fleet,함대,Fleet,艦隊,
+Title_Language,언어,Language,言語,
+Fleet_Count,보유 함선 {0}척,{0} ships owned,保有艦船 {0}隻,
+Ship_Power,전투력 {0},Power {0},戦闘力 {0},
+Enum_Rare,희귀,Rare,レア,
+Enum_Epic,영웅,Epic,エピック,

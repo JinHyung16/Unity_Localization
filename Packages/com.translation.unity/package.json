@@ -1,0 +1,26 @@
+{
+  "name": "com.translation.unity",
+  "displayName": "Translation",
+  "version": "0.6.0",
+  "unity": "2021.3",
+  "unityRelease": "0f1",
+  "description": "게임 DB와 분리된 번역 번들을 런타임에 로드하고 조회한다. 번들 전송은 프로젝트가 담당한다.",
+  "license": "MIT",
+  "author": {
+    "name": "JinHyung(Hugh)",
+    "url": "https://github.com/JinHyung16"
+  },
+  "documentationUrl": "https://github.com/JinHyung16/Unity_TranslationSystem#readme",
+  "keywords": [
+    "localization",
+    "translation",
+    "i18n"
+  ],
+  "samples": [
+    {
+      "displayName": "Basic",
+      "description": "게임 DB(JSON·엑셀) → 번역 CSV → 언어별 JSON → 화면까지 한 바퀴 도는 예제. 빈 씬에 SampleBoot 를 붙이고 Play.",
+      "path": "Samples~/Basic"
+    }
+  ]
+}

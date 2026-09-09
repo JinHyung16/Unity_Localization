@@ -1,0 +1,20 @@
+{
+  "sourceLanguage": "Korean",
+  "languages": [
+    { "id": "Korean",   "displayName": "한국어",  "bcp47": "ko" },
+    { "id": "English",  "displayName": "English", "bcp47": "en", "fallbackId": "Korean" },
+    { "id": "Japanese", "displayName": "日本語",  "bcp47": "ja", "fallbackId": "English" }
+  ],
+
+  "gameData": { "type": "excel", "path": "../GameData.xlsx" },
+
+  "output": { "directory": "../Resources/TranslationSample/Bundles" },
+
+  "script": { "directory": "../Scripts", "namespace": "TranslationSample" },
+
+  "targets": [
+    { "table": "",          "sourceTable": "LocalizationData", "idColumn": "Key" },
+    { "table": "ShipData",  "idColumn": "Id", "columns": ["Name", "Description"] },
+    { "table": "SkillData", "idColumn": "Id", "columns": ["Name"] }
+  ]
+}

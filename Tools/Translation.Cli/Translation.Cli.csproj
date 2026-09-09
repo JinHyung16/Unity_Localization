@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <RollForward>Major</RollForward>
+    <RootNamespace>Translation.Cli</RootNamespace>
+    <AssemblyName>translation</AssemblyName>
+    <LangVersion>9.0</LangVersion>
+    <Nullable>disable</Nullable>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>translation</ToolCommandName>
+    <PackageId>Translation.Cli</PackageId>
+    <Description>번역 DB 동기화와 번들 익스포트 CLI. 빌드 머신에서 번역만 따로 돌릴 때 쓴다</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Translation.Core\Translation.Core.csproj" />
+    <ProjectReference Include="..\Translation.Sources.Excel\Translation.Sources.Excel.csproj" />
+    <ProjectReference Include="..\Translation.Sources.GoogleSheets\Translation.Sources.GoogleSheets.csproj" />
+  </ItemGroup>
+
+</Project>

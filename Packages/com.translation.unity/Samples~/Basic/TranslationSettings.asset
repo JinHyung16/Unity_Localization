@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7c93fc1ddf2e73d203644a738743877, type: 3}
+  m_Name: TranslationSettings
+  m_EditorClassIdentifier:
+  SourceLanguage: Korean
+  Languages:
+  - Id: Korean
+    DisplayName: "\uD55C\uAD6D\uC5B4"
+    Bcp47: ko
+    FallbackId:
+    Font:
+    Enabled: 1
+  - Id: English
+    DisplayName: English
+    Bcp47: en
+    FallbackId: Korean
+    Font:
+    Enabled: 1
+  - Id: Japanese
+    DisplayName: "\u65E5\u672C\u8A9E"
+    Bcp47: ja
+    FallbackId: English
+    Font:
+    Enabled: 1
+  GameDataFolder: {fileID: 102900000, guid: 2476ddf232a44759aa2e090a9169c509, type: 3}
+  GameDataFormat: 0
+  SheetFolder: {fileID: 102900000, guid: c0838df00be74d6d9987595a0f55c626, type: 3}
+  OutputFolder: {fileID: 102900000, guid: 69f9422dd0c74da49a9d001ebeac938b, type: 3}
+  Targets:
+  - Table:
+    IdColumn: Key
+    SubIdColumn:
+    Columns: []
+    ArraySeparator:
+    SourceTable: LocalizationData
+    SourceColumn:
+    Sheet:
+  - Table: ShipData
+    IdColumn: Id
+    SubIdColumn:
+    Columns:
+    - Name
+    - Description
+    ArraySeparator:
+    SourceTable:
+    SourceColumn:
+    Sheet:
+  - Table: SkillData
+    IdColumn: Id
+    SubIdColumn:
+    Columns:
+    - Name
+    ArraySeparator:
+    SourceTable:
+    SourceColumn:
+    Sheet:
+  ScriptFolder: {fileID: 102900000, guid: ad8f3747a523430e96594869fb62dae0, type: 3}
+  ScriptNamespace: TranslationSample
+  DataRowOffset: 0
+  BundleVersion: sample-1

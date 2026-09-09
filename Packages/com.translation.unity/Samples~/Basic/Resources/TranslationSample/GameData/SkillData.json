@@ -1,0 +1,5 @@
+[
+  { "Id": 1, "Name": "화력 증폭 I",  "Cooldown": 12 },
+  { "Id": 2, "Name": "긴급 회피",    "Cooldown": 8 },
+  { "Id": 3, "Name": "함대 결속",    "Cooldown": 30 }
+]

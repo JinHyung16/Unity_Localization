@@ -1,0 +1,19 @@
+{
+    "name": "Translation.Unity.Editor",
+    "rootNamespace": "Translation.Unity.Editor",
+    "references": [
+        "Translation.Core",
+        "Translation.Unity"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

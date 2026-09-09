@@ -1,0 +1,10 @@
+[
+  { "Key": "Common_Confirm",   "Korean": "확인" },
+  { "Key": "Common_Cancel",    "Korean": "취소" },
+  { "Key": "Title_Fleet",      "Korean": "함대" },
+  { "Key": "Title_Language",   "Korean": "언어" },
+  { "Key": "Fleet_Count",      "Korean": "보유 함선 {0}척" },
+  { "Key": "Ship_Power",       "Korean": "전투력 {0}" },
+  { "Key": "Enum_Rare",        "Korean": "희귀" },
+  { "Key": "Enum_Epic",        "Korean": "영웅" }
+]
