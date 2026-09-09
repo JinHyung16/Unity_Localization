@@ -16,7 +16,9 @@ jobs:
           dotnet-version: 8.x
       - run: dotnet publish Tools/Translation.Cli -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o publish
       - run: Compress-Archive -Path publish/translation.exe -DestinationPath translation-win-x64.zip
-      - run: tar -czf Translation.Unity-${{ github.ref_name }}.tgz --transform "s,^Packages/com.translation.unity,package," Packages/com.translation.unity
+      - run: |
+          Copy-Item Packages/com.translation.unity package -Recurse
+          tar -czf Translation.Unity-${{ github.ref_name }}.tgz package
       - uses: softprops/action-gh-release@v2
         with:
           files: |

@@ -86,17 +86,17 @@ Assets/
 `Window > Package Manager > + > Add package from git URL`
 
 ```
-https://github.com/JinHyung16/Unity_TranslationSystem.git?path=/Packages/com.translation.unity#v0.6.0
+https://github.com/JinHyung16/Unity_Localization.git?path=/Packages/com.translation.unity#<태그>
 ```
 
-- `#v0.6.0` 이 버전이다. `?path=` 는 꼭 붙인다.
+- `<태그>` 자리에 [Releases](https://github.com/JinHyung16/Unity_Localization/releases) 의 태그를 넣는다. `?path=` 는 꼭 붙인다.
 - Unity 2021.3 이상. API Compatibility Level 은 `.NET Standard 2.1`.
 - `LocalizeText` 컴포넌트는 TextMeshPro 를 쓴다. 어드레서블 로더는 `com.unity.addressables` 가 있을 때만 켜진다. 둘 다 없어도 나머지는 돈다.
-- git 인증이 번거로우면 [Releases](https://github.com/JinHyung16/Unity_TranslationSystem/releases) 의 `Translation.Unity-v0.6.0.tgz` 를 `Add package from tarball` 로 넣는다.
+- git 인증이 번거로우면 [Releases](https://github.com/JinHyung16/Unity_Localization/releases) 의 `Translation.Unity-<태그>.tgz` 를 `Add package from tarball` 로 넣는다.
 
 ### translation.exe (선택)
 
-Unity 밖에서 돌릴 때만 필요하다. CI, 엑셀 게임 DB, 구글 시트가 그 경우다. [Releases](https://github.com/JinHyung16/Unity_TranslationSystem/releases) 의 `translation-win-x64.zip` 을 풀면 `translation.exe` 하나가 나온다. .NET 설치가 필요 없다.
+Unity 밖에서 돌릴 때만 필요하다. CI, 엑셀 게임 DB, 구글 시트가 그 경우다. [Releases](https://github.com/JinHyung16/Unity_Localization/releases) 의 `translation-win-x64.zip` 을 풀면 `translation.exe` 하나가 나온다. .NET 설치가 필요 없다.
 
 직접 빌드하려면 .NET 8 SDK 로 `dotnet build Translation.Sdk.sln -c Release`. 결과는 `Tools/Translation.Cli/bin/Release/net8.0/translation.exe`.
 
@@ -645,6 +645,6 @@ Sandbox/                             패키지를 물려 둔 빈 Unity 프로젝
 태그를 올리면 GitHub Actions 가 Release 에 `translation-win-x64.zip` 과 `Translation.Unity-<태그>.tgz` 를 붙인다.
 
 ```bash
-git tag v0.6.0
-git push origin v0.6.0
+git tag <태그>
+git push origin <태그>
 ```
