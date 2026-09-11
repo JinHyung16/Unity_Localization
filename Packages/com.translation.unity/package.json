@@ -1,7 +1,7 @@
 {
   "name": "com.translation.unity",
   "displayName": "Translation",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "unity": "2021.3",
   "unityRelease": "0f1",
   "description": "게임 DB와 분리된 번역 번들을 런타임에 로드하고 조회한다. 번들 전송은 프로젝트가 담당한다.",

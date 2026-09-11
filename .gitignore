@@ -80,3 +80,8 @@ token.json
 # 예외: .NET 솔루션과 Tools 프로젝트
 !/Translation.Sdk.sln
 !/Tools/**/*.csproj
+
+# Translation.Core.dll 은 dotnet build 가 패키지로 복사하고, 릴리스 때 CI 가 upm 브랜치에 넣는다
+/Packages/com.translation.unity/Runtime/Plugins/
+/Packages/com.translation.unity/Runtime/Plugins.meta
+!/Tools/Translation.Core/Unity/*.meta

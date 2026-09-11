@@ -87,10 +87,11 @@ Assets/
 `Window > Package Manager > + > Add package from git URL`
 
 ```
-https://github.com/JinHyung16/Unity_Localization.git?path=/Packages/com.translation.unity#<태그>
+https://github.com/JinHyung16/Unity_Localization.git#upm/<태그>
 ```
 
-- `<태그>` 자리에 [Releases](https://github.com/JinHyung16/Unity_Localization/releases) 의 태그를 넣는다. `?path=` 는 꼭 붙인다.
+- `<태그>` 자리에 [Releases](https://github.com/JinHyung16/Unity_Localization/releases) 의 태그를 넣는다. `#upm/v0.0.1` 꼴이다.
+- `main` 이 아니라 `upm` 브랜치 쪽 태그를 가리켜야 한다. 코어가 빌드된 DLL 로 들어 있는 곳은 거기뿐이다.
 - Unity 2021.3 이상. API Compatibility Level 은 `.NET Standard 2.1`.
 - `LocalizeText` 컴포넌트는 TextMeshPro 를 쓴다. 어드레서블 로더는 `com.unity.addressables` 가 있을 때만 켜진다. 둘 다 없어도 나머지는 돈다.
 - git 인증이 번거로우면 [Releases](https://github.com/JinHyung16/Unity_Localization/releases) 의 `Translation.Unity-<태그>.tgz` 를 `Add package from tarball` 로 넣는다.
@@ -99,7 +100,7 @@ https://github.com/JinHyung16/Unity_Localization.git?path=/Packages/com.translat
 
 Unity 밖에서 돌릴 때만 필요하다. CI, 엑셀 게임 DB, 구글 시트가 그 경우다. [Releases](https://github.com/JinHyung16/Unity_Localization/releases) 의 `translation-win-x64.zip` 을 풀면 `translation.exe` 하나가 나온다. .NET 설치가 필요 없다.
 
-직접 빌드하려면 .NET 8 SDK 로 `dotnet build Translation.Sdk.sln -c Release`. 결과는 `Tools/Translation.Cli/bin/Release/net8.0/translation.exe`.
+직접 빌드하려면 .NET 8 SDK 로 `dotnet build Translation.Sdk.sln -c Release`. 결과는 `Tools/Translation.Cli/bin/Release/net8.0/translation.exe`. 같은 빌드가 `Translation.Core.dll` 을 Unity 패키지의 `Runtime/Plugins/` 에도 복사한다.
 
 ---
 
@@ -629,23 +630,50 @@ translation diff <이전 manifest> <이후 manifest>   어느 언어가 바뀌�
 
 ```
 Packages/com.translation.unity/      Unity 패키지
-  Runtime/Core/                      Unity 의존 없는 코어. exe 와 Unity 가 같이 쓴다
-    Sync/  Bundle/  Validate/  Csv/  Config/  Keys/  Inject/
   Runtime/                           부팅 · 로더 · 런타임 · 번들 보관
+  Runtime/Plugins/                   Translation.Core.dll. 빌드가 복사한다. 커밋하지 않는다
   Runtime/Addressables/              어드레서블 로더 (있을 때만 켜진다)
   Editor/                            Translation Settings 에셋과 버튼, 검색 드롭다운
   Samples~/Basic/                    샘플 (3장)
 Tools/
+  Translation.Core/                  Unity 의존 없는 코어의 원본. exe 와 Unity 가 같이 쓴다
+    Sync/  Bundle/  Validate/  Csv/  Config/  Keys/  Inject/
+    Unity/                           DLL 과 같이 패키지로 가는 .meta 템플릿
   Translation.Cli/                   translation.exe
   Translation.Sources.Excel/         엑셀 (ClosedXML)
   Translation.Sources.GoogleSheets/  구글 시트 (Google.Apis.Sheets.v4)
 Sandbox/                             패키지를 물려 둔 빈 Unity 프로젝트 (확인용)
-.github/workflows/release.yml        태그 → Release
+.github/workflows/release.yml        태그 → upm 브랜치 · Release
 ```
 
-태그를 올리면 GitHub Actions 가 Release 에 `translation-win-x64.zip` 과 `Translation.Unity-<태그>.tgz` 를 붙인다.
+### 코어는 DLL 로 들어간다
+
+Unity 는 코어 소스를 컴파일하지 않는다. `Tools/Translation.Core` 가 `netstandard2.1` DLL 로 빌드되고, 패키지는 그 DLL 을 참조한다. 그래서 코어는 Unity 컴파일러의 C# 9 에 묶이지 않고 `Directory.Build.props` 의 `LangVersion` 을 따른다.
+
+- 저장소를 받은 뒤, 그리고 코어를 고친 뒤에는 `dotnet build Tools/Translation.Core` 를 한 번 돌린다. 그래야 Sandbox 가 새 DLL 을 본다.
+- DLL 의 `.meta` 는 `Tools/Translation.Core/Unity/` 에 고정 GUID 로 있다. 빌드가 같이 복사한다.
+
+코어를 고칠 때 지킬 것.
+
+| 대상 | 규칙 |
+|---|---|
+| 내부 구현 | C# 12 문법을 써도 된다. `record` · `init` 은 폴리필이 있다 |
+| 공개 API | Unity 쪽 C# 9 코드가 부른다. `required` 멤버 · 인터페이스 `static abstract` · 제네릭 어트리뷰트는 공개 API 에 쓰지 않는다 |
+| 쓰는 .NET API | `netstandard2.1` 에 있는 것만. 게임 런타임이 이 범위다 |
+| 생성하는 코드 | `LocalKey.cs` 같은 생성 코드는 사용자 프로젝트가 컴파일한다. C# 9 로 쓴다 |
+
+### 배포
+
+`package.json` 의 `version` 을 올리고 커밋한 뒤, 같은 번호로 태그를 올린다.
 
 ```bash
 git tag <태그>
 git push origin <태그>
 ```
+
+GitHub Actions 가 하는 일.
+
+1. 태그와 `package.json` 의 `version` 이 다르면 멈춘다.
+2. `Translation.Core.dll` 을 빌드해 패키지에 넣는다.
+3. 그 패키지를 `upm` 브랜치에 커밋하고 `upm/<태그>` 태그를 단다. git URL 설치는 이 태그를 쓴다.
+4. Release 에 `Translation.Unity-<태그>.tgz` 와 `translation-win-x64.zip` 을 붙인다.

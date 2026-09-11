@@ -5,22 +5,100 @@ on:
     tags: ["v*"]
 
 jobs:
-  cli:
-    runs-on: windows-latest
+  # Unity 패키지를 뽑는다. Translation.Core.dll 을 빌드해 넣고
+  # upm 브랜치와 upm/<태그> 태그로 올린 뒤, 같은 내용을 tgz 로도 만든다
+  upm:
+    runs-on: ubuntu-latest
     permissions:
       contents: write
+    env:
+      TAG: ${{ github.ref_name }}
+      PACKAGE_DIR: Packages/com.translation.unity
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.x
-      - run: dotnet publish Tools/Translation.Cli -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o publish
-      - run: Compress-Archive -Path publish/translation.exe -DestinationPath translation-win-x64.zip
+
+      - name: 태그와 package.json 버전 대조
+        run: |
+          VERSION="${TAG#v}"
+          PACKAGE_VERSION="$(jq -r .version "$PACKAGE_DIR/package.json")"
+          if [ "$PACKAGE_VERSION" != "$VERSION" ]; then
+            echo "::error::태그는 $TAG 인데 package.json version 은 $PACKAGE_VERSION 이다"
+            exit 1
+          fi
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+
+      - name: Translation.Core.dll 빌드
+        run: |
+          dotnet build Tools/Translation.Core -c Release -p:Version="$VERSION" -p:ContinuousIntegrationBuild=true
+          for f in Translation.Core.dll Translation.Core.dll.meta Translation.Core.pdb Translation.Core.pdb.meta Translation.Core.xml Translation.Core.xml.meta; do
+            test -f "$PACKAGE_DIR/Runtime/Plugins/$f" || { echo "::error::$f 가 패키지에 없다"; exit 1; }
+          done
+          test -f "$PACKAGE_DIR/Runtime/Plugins.meta"
+
+      - name: tgz
+        run: |
+          cp -R "$PACKAGE_DIR" "$RUNNER_TEMP/package"
+          tar -czf "Translation.Unity-$TAG.tgz" -C "$RUNNER_TEMP" package
+
+      - name: upm 브랜치와 upm/태그 올리기
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          REMOTE="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          UPM="$RUNNER_TEMP/upm"
+          if git ls-remote --exit-code --heads "$REMOTE" upm > /dev/null; then
+            git clone --quiet --depth 1 --branch upm "$REMOTE" "$UPM"
+          else
+            git init --quiet -b upm "$UPM"
+            git -C "$UPM" remote add origin "$REMOTE"
+          fi
+          find "$UPM" -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          cp -R "$PACKAGE_DIR/." "$UPM/"
+          cd "$UPM"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit --quiet --allow-empty -m "upm $TAG ($GITHUB_SHA)"
+          git tag -f "upm/$TAG"
+          git push --quiet origin upm "+refs/tags/upm/$TAG:refs/tags/upm/$TAG"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: upm
+          path: Translation.Unity-${{ github.ref_name }}.tgz
+
+  cli:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.x
       - run: |
-          Copy-Item Packages/com.translation.unity package -Recurse
-          tar -czf Translation.Unity-${{ github.ref_name }}.tgz package
+          $version = '${{ github.ref_name }}'.TrimStart('v')
+          dotnet publish Tools/Translation.Cli -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:CopyToUnityPackage=false -p:Version=$version -o publish
+      - run: Compress-Archive -Path publish/translation.exe -DestinationPath translation-win-x64.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cli
+          path: translation-win-x64.zip
+
+  release:
+    needs: [upm, cli]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
       - uses: softprops/action-gh-release@v2
         with:
           files: |
-            translation-win-x64.zip
-            Translation.Unity-${{ github.ref_name }}.tgz
+            dist/translation-win-x64.zip
+            dist/Translation.Unity-${{ github.ref_name }}.tgz

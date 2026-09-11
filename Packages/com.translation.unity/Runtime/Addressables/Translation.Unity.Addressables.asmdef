@@ -2,7 +2,6 @@
     "name": "Translation.Unity.Addressables",
     "rootNamespace": "Translation.Unity",
     "references": [
-        "Translation.Core",
         "Translation.Unity",
         "Unity.Addressables",
         "Unity.ResourceManager"
@@ -10,8 +9,10 @@
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "Translation.Core.dll"
+    ],
     "autoReferenced": true,
     "defineConstraints": [
         "TRANSLATION_ADDRESSABLES"

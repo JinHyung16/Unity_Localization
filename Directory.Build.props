@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <Version>0.4.0</Version>
+    <!-- Unity 가 소스를 직접 컴파일하지 않으므로 C# 9 에 묶이지 않는다. CI 의 .NET 8 SDK 가 지원하는 최신 버전 -->
+    <LangVersion>12.0</LangVersion>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>localization;translation;i18n;unity;gamedev</PackageTags>

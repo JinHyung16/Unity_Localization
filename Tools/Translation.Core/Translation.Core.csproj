@@ -4,19 +4,35 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <RootNamespace>Translation</RootNamespace>
     <AssemblyName>Translation.Core</AssemblyName>
-    <LangVersion>9.0</LangVersion>
     <Nullable>disable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>CS1591</NoWarn>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <Description>엔진과 데이터 소스에 독립적인 번역 SDK 코어. 외부 의존성 없음</Description>
-    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
   </PropertyGroup>
 
-  <!-- 소스 정본은 Unity 패키지 안에 있다. Unity는 폴더 밖 파일을 컴파일할 수 없어서
-       Unity 쪽을 정본으로 두고 .NET 빌드가 그것을 참조한다. 사본이 생기지 않는다. -->
-  <ItemGroup>
-    <Compile Include="..\..\Packages\com.translation.unity\Runtime\Core\**\*.cs" LinkBase="Core" />
-  </ItemGroup>
+  <!--
+    소스 정본은 여기다. Unity 는 이 소스를 직접 컴파일하지 않고, 빌드된 DLL 을 받는다.
+    그래서 언어 버전은 Unity 컴파일러(C# 9)가 아니라 Directory.Build.props 의 LangVersion 을 따른다.
+    대상 프레임워크는 게임 런타임이 돌리는 netstandard2.1 에 그대로 묶인다.
+
+    빌드하면 DLL · pdb · xml 과 Unity/ 의 메타 템플릿이 패키지의 Runtime/Plugins 로 복사된다.
+    Sandbox 를 열기 전에 한 번 빌드한다. 복사를 끄려면 -p:CopyToUnityPackage=false
+  -->
+  <PropertyGroup>
+    <UnityPackageDir>$(MSBuildThisFileDirectory)../../Packages/com.translation.unity/</UnityPackageDir>
+    <UnityPluginDir>$(UnityPackageDir)Runtime/Plugins/</UnityPluginDir>
+    <UnityMetaDir>$(MSBuildThisFileDirectory)Unity/</UnityMetaDir>
+  </PropertyGroup>
+
+  <Target Name="CopyToUnityPackage" AfterTargets="Build" Condition="'$(CopyToUnityPackage)' != 'false'">
+    <ItemGroup>
+      <_UnityPluginFile Include="$(TargetPath);$(TargetDir)$(TargetName).pdb;$(TargetDir)$(TargetName).xml" />
+      <_UnityPluginMeta Include="$(UnityMetaDir)$(TargetName).*.meta" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_UnityPluginFile);@(_UnityPluginMeta)" DestinationFolder="$(UnityPluginDir)" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="$(UnityMetaDir)Plugins.meta" DestinationFolder="$(UnityPackageDir)Runtime/" SkipUnchangedFiles="true" />
+    <Message Importance="high" Text="Translation.Core -> $(UnityPluginDir)" />
+  </Target>
 
 </Project>

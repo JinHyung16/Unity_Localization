@@ -2,7 +2,6 @@
     "name": "Translation.Unity.Editor",
     "rootNamespace": "Translation.Unity.Editor",
     "references": [
-        "Translation.Core",
         "Translation.Unity"
     ],
     "includePlatforms": [
@@ -10,8 +9,10 @@
     ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "Translation.Core.dll"
+    ],
     "autoReferenced": true,
     "defineConstraints": [],
     "versionDefines": [],

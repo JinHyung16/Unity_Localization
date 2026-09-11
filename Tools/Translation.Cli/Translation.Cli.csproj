@@ -6,7 +6,6 @@
     <RollForward>Major</RollForward>
     <RootNamespace>Translation.Cli</RootNamespace>
     <AssemblyName>translation</AssemblyName>
-    <LangVersion>9.0</LangVersion>
     <Nullable>disable</Nullable>
     <InvariantGlobalization>true</InvariantGlobalization>
     <PackAsTool>true</PackAsTool>
