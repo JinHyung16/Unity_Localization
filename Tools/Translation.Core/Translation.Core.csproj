@@ -16,8 +16,9 @@
     그래서 언어 버전은 Unity 컴파일러(C# 9)가 아니라 Directory.Build.props 의 LangVersion 을 따른다.
     대상 프레임워크는 게임 런타임이 돌리는 netstandard2.1 에 그대로 묶인다.
 
-    빌드하면 DLL · pdb · xml 과 Unity/ 의 메타 템플릿이 패키지의 Runtime/Plugins 로 복사된다.
-    Sandbox 를 열기 전에 한 번 빌드한다. 복사를 끄려면 -p:CopyToUnityPackage=false
+    Release 로 빌드하면 DLL · pdb · xml 과 Unity/ 의 메타 템플릿이 패키지의 Runtime/Plugins 로 복사된다.
+    git URL 설치는 태그의 파일을 그대로 쓰므로, 코어를 고쳤으면 복사된 DLL 도 같이 커밋한다.
+    복사를 끄려면 -p:CopyToUnityPackage=false
   -->
   <PropertyGroup>
     <UnityPackageDir>$(MSBuildThisFileDirectory)../../Packages/com.translation.unity/</UnityPackageDir>
@@ -25,7 +26,7 @@
     <UnityMetaDir>$(MSBuildThisFileDirectory)Unity/</UnityMetaDir>
   </PropertyGroup>
 
-  <Target Name="CopyToUnityPackage" AfterTargets="Build" Condition="'$(CopyToUnityPackage)' != 'false'">
+  <Target Name="CopyToUnityPackage" AfterTargets="Build" Condition="'$(Configuration)' == 'Release' And '$(CopyToUnityPackage)' != 'false'">
     <ItemGroup>
       <_UnityPluginFile Include="$(TargetPath);$(TargetDir)$(TargetName).pdb;$(TargetDir)$(TargetName).xml" />
       <_UnityPluginMeta Include="$(UnityMetaDir)$(TargetName).*.meta" />

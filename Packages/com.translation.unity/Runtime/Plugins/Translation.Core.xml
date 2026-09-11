@@ -1,0 +1,501 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Translation.Core</name>
+    </assembly>
+    <members>
+        <member name="T:Translation.GameDataRow">
+            <summary> 게임 DB 한 행. 셀은 문자열이거나 문자열 배열이다 </summary>
+        </member>
+        <member name="M:Translation.GameDataRow.GetText(System.String,System.String)">
+            <summary> 셀을 문자열로. 배열이면 arraySeparator 로 잇는다 (없으면 개행) </summary>
+        </member>
+        <member name="T:Translation.IGameDataSource">
+            <summary> 게임 DB 에서 원문을 읽는다. sync 가 시트에 넣을 원문의 출처다 </summary>
+        </member>
+        <member name="M:Translation.IGameDataSource.ReadTable(System.String)">
+            <summary> 테이블의 행 전부. 없으면 빈 목록 </summary>
+        </member>
+        <member name="T:Translation.GameDataGrid">
+            <summary> 헤더 있는 셀 격자를 게임 DB 행으로 바꾼다. CSV·엑셀 게임 DB 가 같이 쓴다 </summary>
+        </member>
+        <member name="T:Translation.ITranslationSheetStore">
+            <summary>
+            번역 시트를 셀 격자 그대로 읽고 쓴다. sync 만 쓴다.
+            팀이 둔 다른 컬럼을 건드리지 않으려고 격자 단위로 다룬다
+            </summary>
+        </member>
+        <member name="M:Translation.ITranslationSheetStore.ReadGrid(System.String)">
+            <summary> 시트 전체를 격자로. 없으면 빈 목록 </summary>
+        </member>
+        <member name="M:Translation.ITranslationSheetStore.WriteGrid(System.String,System.Collections.Generic.IReadOnlyList{System.String[]})">
+            <summary> 시트를 통째로 바꿔 쓴다. 없으면 만든다 </summary>
+        </member>
+        <member name="T:Translation.ITranslationSource">
+            <summary> 번역 시트를 읽는다. 쓰는 것은 <see cref="T:Translation.ITranslationSheetStore"/> 가 한다 </summary>
+        </member>
+        <member name="P:Translation.BundleBuildOptions.BundleVersion">
+            <summary> 패치 버전 문자열. 비우면 UTC 타임스탬프를 쓴다 </summary>
+        </member>
+        <member name="P:Translation.BundleBuildOptions.SourceLabel">
+            <summary> 무엇으로부터 뽑았는지 남기는 감사용 라벨 </summary>
+        </member>
+        <member name="P:Translation.BundleBuildOptions.BakeFallback">
+            <summary> true 면 빈 번역을 폴백으로 채워 언어 파일 하나만으로 완전하게 만든다 </summary>
+        </member>
+        <member name="P:Translation.BundleBuildOptions.FileExtension">
+            <summary> 언어 파일 확장자. 비우면 .trans / .trans.gz. Unity 가 읽으려면 ".json" </summary>
+        </member>
+        <member name="P:Translation.BundleBuildOptions.ManifestFileName">
+            <summary> 매니페스트 파일 이름. 비우면 manifest.json </summary>
+        </member>
+        <member name="P:Translation.BundleBuildOptions.CsvFileName">
+            <summary> 이름을 주면 전 언어를 한 장에 담은 CSV 를 같이 굽는다. 비우면 안 만든다 </summary>
+        </member>
+        <member name="P:Translation.BundleBuildResult.Files">
+            <summary> 파일 이름 → 내용. manifest.json도 포함되어 있다 </summary>
+        </member>
+        <member name="T:Translation.BundleBuilder">
+            <summary> 번역 엔트리를 언어별 번들 파일과 매니페스트로 굽는다 </summary>
+        </member>
+        <member name="M:Translation.BundleBuilder.ResolveExtension(Translation.BundleBuildOptions)">
+            <summary> 옵션이 지정한 확장자. 없으면 압축에 따른 기본값 </summary>
+        </member>
+        <member name="T:Translation.BundleKey">
+            <summary>
+            번들의 키 문자열 규약. 키 코덱과 무관하게 늘 같은 문자열이 나온다.
+            UI 문자열 키는 Id 그대로라 코드에서 바로 조회할 수 있다
+            </summary>
+        </member>
+        <member name="F:Translation.BundleKey.Separator">
+            <summary> Table/Column/Id/SubId를 구분하는 문자. 데이터에 등장할 수 없는 유닛 구분자를 쓴다 </summary>
+        </member>
+        <member name="M:Translation.BundleKey.ToDisplay(System.String)">
+            <summary> 로그와 리포트에 보여줄 사람이 읽는 형태 </summary>
+        </member>
+        <member name="T:Translation.BundleLanguageInfo">
+            <summary> 매니페스트에 기록되는 언어 하나의 정보 </summary>
+        </member>
+        <member name="P:Translation.BundleLanguageInfo.FontAddress">
+            <summary> 이 언어의 폰트 주소. 비어 있으면 FallbackId 사슬을 탄다 </summary>
+        </member>
+        <member name="P:Translation.BundleLanguageInfo.Hash">
+            <summary> 파일 내용의 SHA-256 16진 문자열. 패치 필요 판정에 쓴다 </summary>
+        </member>
+        <member name="T:Translation.BundleManifest">
+            <summary> 번들 하나의 목차. 이것만 비교하면 어느 언어 파일이 바뀌었는지 안다 </summary>
+        </member>
+        <member name="P:Translation.BundleManifest.BundleVersion">
+            <summary> 패치 버전 문자열. 익스포트할 때 지정한다 </summary>
+        </member>
+        <member name="P:Translation.BundleManifest.SourceLabel">
+            <summary> 무엇으로부터 뽑았는지 남기는 감사용 라벨 (예: sheet:13Cxr4..., excel:D:\gamedata) </summary>
+        </member>
+        <member name="P:Translation.BundleManifest.FallbackBaked">
+            <summary> 폴백이 번들에 이미 반영됐는지. true면 각 언어 파일이 자기 완결적이다 </summary>
+        </member>
+        <member name="P:Translation.BundleManifest.Tables">
+            <summary> 번들에 포함된 테이블 목록. 진단용이며 런타임 동작에는 쓰이지 않는다 </summary>
+        </member>
+        <member name="M:Translation.BundleManifest.ResolveFontAddress(System.String)">
+            <summary> 그 언어의 폰트 주소. 없으면 폴백 사슬을 타고, 끝까지 없으면 null </summary>
+        </member>
+        <member name="T:Translation.BundleReader">
+            <summary> 번들 바이트를 해석한다. gzip 여부는 자동으로 판별한다 </summary>
+        </member>
+        <member name="M:Translation.BundleReader.VerifyHash(System.Byte[],System.String)">
+            <summary> 받은 바이트가 매니페스트에 적힌 해시와 일치하는지 </summary>
+        </member>
+        <member name="M:Translation.BundleReader.ReadText(System.Byte[])">
+            <summary> gzip이면 풀고 UTF-8로 읽는다 </summary>
+        </member>
+        <member name="T:Translation.LanguageBundle">
+            <summary> 한 언어의 번역 전체. 이 파일 하나만 있으면 그 언어로 동작한다 </summary>
+        </member>
+        <member name="T:Translation.LocalKeyCsv">
+            <summary>
+            빌드에 동봉하는 번역표 한 장. 열이 언어다 (Key,Korean,English,…).
+            패치 전에도 글자가 나와야 하는 자리를 위한 것이라 UI 문자열 키만 담는다
+            </summary>
+        </member>
+        <member name="M:Translation.LocalKeyCsv.Write(System.Collections.Generic.IReadOnlyList{Translation.TranslateEntry},Translation.LanguageSet,System.Collections.Generic.IReadOnlyList{System.String},System.Boolean)">
+            <summary> 엔트리를 CSV 한 장으로 굽는다. 열 순서는 languageIds 순서다 </summary>
+        </member>
+        <member name="M:Translation.LocalKeyCsv.Parse(System.String,System.String)">
+            <summary> CSV 에서 한 언어의 열만 뽑아 키에서 글자로 준다 </summary>
+        </member>
+        <member name="M:Translation.LocalKeyCsv.ReadLanguageIds(System.String)">
+            <summary> 헤더에서 언어 열 이름들을 준다 (첫 칸 Key 는 뺀다) </summary>
+        </member>
+        <member name="T:Translation.LocalKeyScript">
+            <summary>
+            UI 문자열 키를 C# 코드로 굽는다. 인스펙터에서 드롭다운으로 고르고 코드에서 자동완성으로 쓰기 위한 것이다.
+            LocalKey.cs 는 export 마다 다시 쓰고, LocalizeText.cs 는 없을 때만 만든다 (프로젝트가 고쳐 써도 된다).
+            enum 값은 키 이름의 해시라 시트에 키를 끼워 넣거나 순서를 바꿔도 기존 프리팹의 값이 바뀌지 않는다
+            </summary>
+        </member>
+        <member name="M:Translation.LocalKeyScript.WriteFiles(System.Collections.Generic.IReadOnlyList{Translation.TranslateEntry},System.String,System.String,System.String,System.Collections.Generic.IList{System.String})">
+            <summary> 폴더에 LocalKey.cs 를 쓰고, LocalizeText.cs 가 없으면 만든다. 쓴 파일 경로를 돌려준다 </summary>
+        </member>
+        <member name="M:Translation.LocalKeyScript.WriteEnum(System.Collections.Generic.IReadOnlyList{Translation.TranslateEntry},System.String,System.String,System.Collections.Generic.IList{System.String})">
+            <summary> LocalKey enum 과 Localization 파사드가 든 파일 내용 </summary>
+        </member>
+        <member name="M:Translation.LocalKeyScript.WriteComponent(System.String)">
+            <summary> TMP 텍스트에 붙이는 컴포넌트 파일 내용. 프로젝트가 고쳐 써도 된다 </summary>
+        </member>
+        <member name="M:Translation.LocalKeyScript.StableHash(System.String)">
+            <summary> 키 이름의 FNV-1a 32비트 해시. 같은 이름이면 언제 어디서 돌려도 같은 값이다 </summary>
+        </member>
+        <member name="M:Translation.LocalKeyScript.IsIdentifier(System.String)">
+            <summary> C# 이름으로 쓸 수 있는지. 영문 · 숫자 · _ 만, 숫자로 시작 불가 </summary>
+        </member>
+        <member name="P:Translation.ManifestDiff.ChangedLanguages">
+            <summary> 해시가 달라진 언어. 이 파일만 다시 받으면 된다 </summary>
+        </member>
+        <member name="M:Translation.ManifestDiff.Compare(Translation.BundleManifest,Translation.BundleManifest)">
+            <summary> local이 null이면 전부 새로 받아야 하는 것으로 본다 </summary>
+        </member>
+        <member name="T:Translation.MiniJson">
+            <summary>
+            번들과 설정 파일만을 위한 최소 JSON 리더/라이터. 코어의 외부 의존성을 0으로 유지하기 위해 존재한다.
+            오브젝트는 Dictionary(string, object), 배열은 List(object), 숫자는 double로 읽는다
+            </summary>
+        </member>
+        <member name="T:Translation.TranslationExporter">
+            <summary> 번역 시트를 읽어 게임에 넣을 번들을 만든다. 게임 DB 에 접근하지 않는다 </summary>
+        </member>
+        <member name="T:Translation.SheetLayout">
+            <summary> 번역 시트 한 장을 어떻게 읽을지. 셀 격자를 TranslateEntry 로 바꾼다 </summary>
+        </member>
+        <member name="P:Translation.SheetLayout.Targets">
+            <summary> 이 시트가 담는 대상들. 시트 하나에 표가 여럿 올 수 있다 </summary>
+        </member>
+        <member name="P:Translation.SheetLayout.Target">
+            <summary> 대상이 하나인 시트에서 쓴다 </summary>
+        </member>
+        <member name="P:Translation.SheetLayout.DataRowOffset">
+            <summary> 헤더 다음에 건너뛸 행 수. 2행이 타입 행이면 1 </summary>
+        </member>
+        <member name="P:Translation.SheetLayout.ExpectedColumns">
+            <summary> 이 레이아웃이 시트에서 찾는 컬럼 이름들. 진단용 </summary>
+        </member>
+        <member name="M:Translation.SheetLayout.ReadEntries(System.Collections.Generic.IReadOnlyList{System.Collections.Generic.IReadOnlyList{System.String}},System.Collections.Generic.IList{System.String})">
+            <summary>
+            행들을 TranslateEntry 로 바꾼다. rows[0] 은 헤더이고 컬럼은 이름으로 찾는다.
+            모르는 컬럼은 무시하고, 해석하지 못한 행은 warnings 에 남긴다
+            </summary>
+        </member>
+        <member name="T:Translation.TableTarget">
+            <summary> 번역 대상 선언 하나. 게임 DB의 어느 테이블 어느 컬럼을 번역할지 </summary>
+        </member>
+        <member name="P:Translation.TableTarget.Table">
+            <summary> 게임 DB 테이블명. 비어 있으면 테이블에 속하지 않는 독립 UI 문자열 세트다 </summary>
+        </member>
+        <member name="P:Translation.TableTarget.SubIdColumn">
+            <summary> 보조 식별자 컬럼명. 복합키 테이블에서만 쓴다 </summary>
+        </member>
+        <member name="P:Translation.TableTarget.TranslationSheetName">
+            <summary> 번역 DB 쪽 시트 이름. 비어 있으면 TranslationConfig의 규약으로 만든다 </summary>
+        </member>
+        <member name="P:Translation.TableTarget.ArraySeparator">
+            <summary> 배열 컬럼을 한 셀에 합칠 때 쓰는 구분자. 비어 있으면 배열이 아니다 </summary>
+        </member>
+        <member name="P:Translation.TableTarget.SourceTable">
+            <summary> sync 가 원문을 읽을 게임 DB 테이블. 비우면 Table. 독립 UI 세트는 이걸 줘야 sync 가 돈다 </summary>
+        </member>
+        <member name="P:Translation.TableTarget.SourceColumn">
+            <summary> 독립 UI 세트에서 원문 텍스트가 든 컬럼. 비우면 원문 언어 Id 와 같은 이름 </summary>
+        </member>
+        <member name="P:Translation.TableTarget.ResolvedSourceTable">
+            <summary> sync 가 실제로 읽을 테이블. 없으면 빈 문자열 </summary>
+        </member>
+        <member name="T:Translation.TranslationConfig">
+            <summary> 번역 시트를 어떻게 읽을지. 언어 목록, 읽을 시트와 컬럼, 키 규약 </summary>
+        </member>
+        <member name="P:Translation.TranslationConfig.KeyCodec">
+            <summary> 시트별 코덱이 없을 때 쓰는 기본 코덱 </summary>
+        </member>
+        <member name="P:Translation.TranslationConfig.TranslationSheetName">
+            <summary> 표 번역이 전부 들어가는 시트. 비우면 표마다 TranslationSheetPrefix + 테이블명 </summary>
+        </member>
+        <member name="P:Translation.TranslationConfig.TranslationSheetPrefix">
+            <summary> TranslationSheetName 이 비어 있을 때, sheet 를 안 적은 대상의 시트 이름에 붙이는 접두사 </summary>
+        </member>
+        <member name="P:Translation.TranslationConfig.StandaloneSheetName">
+            <summary> UI 문자열 세트의 시트 이름. 기본 LocalizationData </summary>
+        </member>
+        <member name="P:Translation.TranslationConfig.DataRowOffset">
+            <summary> 헤더 다음에 건너뛸 행 수. 2행이 타입 행이면 1 </summary>
+        </member>
+        <member name="P:Translation.TranslationConfig.SheetNames">
+            <summary> 시트 이름을 선언 순서로. 대상이 같은 시트를 공유하면 한 번만 나온다 </summary>
+        </member>
+        <member name="M:Translation.TranslationConfig.CodecOf(System.String)">
+            <summary> 시트의 코덱. UI 문자열 시트에 표용 코덱이 걸리면 LocalKey 한 컬럼으로 읽는다 </summary>
+        </member>
+        <member name="M:Translation.TranslationConfig.GetSheetName(Translation.TableTarget)">
+            <summary> 대상의 번역 시트 이름. 지정값이 없으면 규약으로 만든다 </summary>
+        </member>
+        <member name="M:Translation.TranslationConfig.GetLayout(Translation.TableTarget)">
+            <summary> 대상의 시트 읽기 레이아웃을 만든다. 그 시트를 공유하는 대상이 전부 들어간다 </summary>
+        </member>
+        <member name="T:Translation.TranslationConfigDocument">
+            <summary> 설정 파일 하나를 읽은 결과. 어댑터별 섹션은 Raw에서 직접 꺼내 쓴다 </summary>
+        </member>
+        <member name="P:Translation.TranslationConfigDocument.Raw">
+            <summary> 설정 파일 전체의 원본 맵. translations/output 같은 어댑터 섹션이 들어 있다 </summary>
+        </member>
+        <member name="T:Translation.TranslationConfigFile">
+            <summary> translation.config.json 을 읽는다 </summary>
+        </member>
+        <member name="M:Translation.TranslationConfigFile.ParseKeyCodec(System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary> keyCodec 이 없으면 translationKey(TranslationKey + Id). UI 시트는 CodecOf 가 LocalKey(flat) 로 돌린다 </summary>
+        </member>
+        <member name="M:Translation.TranslationConfigFile.ApplySheetCodecs(Translation.TranslationConfig,System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary> 시트별 코덱 — naming.keyCodecs 의 { 시트명: 코덱 } </summary>
+        </member>
+        <member name="T:Translation.TranslationScripts">
+            <summary> 더블클릭으로 명령을 돌리는 bat. CLI 의 init 과 Unity 의 설정 에셋이 같은 내용을 쓴다 </summary>
+        </member>
+        <member name="M:Translation.TranslationScripts.Bat(System.String)">
+            <summary> 같은 폴더의 translation.exe 를 먼저 찾고, 없으면 PATH 의 translation 을 쓴다 </summary>
+        </member>
+        <member name="T:Translation.CsvFile">
+            <summary> RFC 4180 CSV 읽기. 따옴표 안의 콤마와 개행을 올바르게 다룬다 </summary>
+        </member>
+        <member name="M:Translation.CsvFile.Write(System.String,System.Collections.Generic.IReadOnlyList{System.String[]})">
+            <summary> 격자를 RFC 4180 CSV 로 쓴다. UTF-8, BOM 없음, LF </summary>
+        </member>
+        <member name="M:Translation.CsvFile.IndexOf(System.Collections.Generic.IReadOnlyList{System.String},System.String)">
+            <summary> 헤더 행에서 컬럼 이름의 인덱스를 찾는다. 없으면 -1 </summary>
+        </member>
+        <member name="T:Translation.CsvGameDataSource">
+            <summary> 폴더 안의 {테이블}.csv 를 게임 DB 로 읽는다. 1행이 헤더다. 루트에 없으면 하위 폴더를 찾는다 </summary>
+        </member>
+        <member name="P:Translation.CsvGameDataSource.DataRowOffset">
+            <summary> 헤더 다음에 건너뛸 행 수 (타입 행 등) </summary>
+        </member>
+        <member name="T:Translation.CsvTranslationSource">
+            <summary> 폴더 안의 {시트명}.csv 를 번역 시트로 읽는다. sync 는 같은 파일에 쓴다 </summary>
+        </member>
+        <member name="P:Translation.InjectReport.MissingKeys">
+            <summary> 번들에 키가 없어 건너뛴 필드 수 </summary>
+        </member>
+        <member name="T:Translation.FieldInjector">
+            <summary> 게임 데이터 객체의 번역 대상 필드를 지금 언어 값으로 덮어쓴다 </summary>
+        </member>
+        <member name="M:Translation.FieldInjector.Inject(Translation.TableTarget,System.Collections.IEnumerable,System.Func{System.Object,System.String},System.Func{System.Object,System.String})">
+            <summary>
+            한 테이블의 행들에 번역을 넣는다. idSelector 가 없으면
+            target.IdColumn 이름의 필드나 프로퍼티를 리플렉션으로 읽는다
+            </summary>
+        </member>
+        <member name="T:Translation.MemberAccessor">
+            <summary> 필드와 프로퍼티를 같은 방식으로 읽고 쓴다. 타입별로 캐싱한다 </summary>
+        </member>
+        <member name="M:Translation.MemberAccessor.Find(System.Type,System.String)">
+            <summary> 이름으로 필드나 프로퍼티를 찾는다. 없으면 null. 대소문자를 무시하고 재시도한다 </summary>
+        </member>
+        <member name="T:Translation.FlatKeyCodec">
+            <summary> 키를 단일 문자열 컬럼에 담는다. project_mining의 Table_Column_Id 규약 </summary>
+        </member>
+        <member name="M:Translation.FlatKeyCodec.Flatten(Translation.TranslateKey)">
+            <summary> Table, Column, Id를 구분자로 이어 붙인다. 독립 키는 Id만 쓴다 </summary>
+        </member>
+        <member name="T:Translation.KeyDecodeContext">
+            <summary> 이 시트가 어느 대상들을 담는지. 시트 하나에 표가 여럿 올 수 있어 목록이다 </summary>
+        </member>
+        <member name="P:Translation.KeyDecodeContext.Table">
+            <summary> 첫 대상의 테이블명. 대상이 하나인 시트에서 쓴다 </summary>
+        </member>
+        <member name="P:Translation.KeyDecodeContext.Columns">
+            <summary> 첫 대상의 컬럼 목록. 대상이 하나인 시트에서 쓴다 </summary>
+        </member>
+        <member name="P:Translation.KeyDecodeContext.IsStandalone">
+            <summary> 이 시트가 테이블에 속하지 않는 독립 UI 문자열 세트인지 </summary>
+        </member>
+        <member name="M:Translation.KeyDecodeContext.Find(System.String,System.String)">
+            <summary> 테이블명·컬럼명으로 대상을 찾는다. 못 찾으면 null </summary>
+        </member>
+        <member name="T:Translation.IKeyCodec">
+            <summary> TranslateKey를 번역 DB의 키 컬럼들로 인코딩하고 되돌린다 </summary>
+        </member>
+        <member name="M:Translation.IKeyCodec.Encode(Translation.TranslateKey)">
+            <summary> KeyColumns와 같은 순서, 같은 길이의 셀 값들을 만든다 </summary>
+        </member>
+        <member name="M:Translation.IKeyCodec.TryDecode(System.Collections.Generic.IReadOnlyList{System.String},Translation.KeyDecodeContext,Translation.TranslateKey@)">
+            <summary> 셀 값들을 TranslateKey로 되돌린다. 해석할 수 없으면 false </summary>
+        </member>
+        <member name="T:Translation.TranslationKeyCodec">
+            <summary>
+            키를 TranslationKey(시트명_컬럼명) 와 Id 두 컬럼에 담는다.
+            시트 하나가 여러 표를 담을 수 있다
+            </summary>
+        </member>
+        <member name="M:Translation.TranslationKeyCodec.Flatten(Translation.TranslateKey)">
+            <summary> 시트명_컬럼명. 행 식별자는 별개 컬럼이라 여기 안 들어간다 </summary>
+        </member>
+        <member name="T:Translation.TupleKeyCodec">
+            <summary> 키를 Table, Column, Id, SubId 네 컬럼으로 나눠 담는다. dfw-client의 TranslateKey 규약 </summary>
+        </member>
+        <member name="T:Translation.LanguageDefinition">
+            <summary> 프로젝트가 선언하는 언어 하나. Id가 시트 컬럼명이자 번들 키가 된다 </summary>
+        </member>
+        <member name="P:Translation.LanguageDefinition.Id">
+            <summary> 프로젝트 고유 식별자. 시트 컬럼명·번들 파일명으로 그대로 쓰인다 (예: KR, US, TW, Korean, English) </summary>
+        </member>
+        <member name="P:Translation.LanguageDefinition.DisplayName">
+            <summary> UI에 노출할 이름 (예: 한국어, English). 비어 있으면 Id를 쓴다 </summary>
+        </member>
+        <member name="P:Translation.LanguageDefinition.Bcp47">
+            <summary> 선택. 시스템 언어 감지·검증용 BCP-47 태그 (예: ko, en, zh-Hant). SDK 동작에 필수는 아니다 </summary>
+        </member>
+        <member name="P:Translation.LanguageDefinition.FallbackId">
+            <summary> 이 언어가 비었을 때 대신 쓸 언어 Id. 비어 있으면 LanguageSet.SourceLanguageId를 쓴다 </summary>
+        </member>
+        <member name="P:Translation.LanguageDefinition.FontAddress">
+            <summary>
+            이 언어가 쓸 폰트 주소. SDK 는 문자열을 실어 나르기만 하고 뜻은 프로젝트가 정한다.
+            비어 있으면 FallbackId 사슬을 탄다
+            </summary>
+        </member>
+        <member name="P:Translation.LanguageDefinition.Enabled">
+            <summary> false면 동기화·익스포트 대상에서 제외한다 (미출시 언어) </summary>
+        </member>
+        <member name="T:Translation.LanguageSet">
+            <summary> 프로젝트가 선언한 언어 목록과 폴백 체인. 언어 식별자 체계를 SDK가 강제하지 않는다 </summary>
+        </member>
+        <member name="P:Translation.LanguageSet.SourceLanguageId">
+            <summary> 원문 언어 Id. 게임 DB에서 읽어오는 텍스트가 이 언어이고, 최종 폴백이 된다 </summary>
+        </member>
+        <member name="P:Translation.LanguageSet.All">
+            <summary> 선언 순서대로의 전체 언어 목록 (Enabled=false 포함) </summary>
+        </member>
+        <member name="P:Translation.LanguageSet.EnabledIds">
+            <summary> Enabled=true인 언어 Id 목록. 동기화·익스포트 대상 </summary>
+        </member>
+        <member name="M:Translation.LanguageSet.Normalize(System.String)">
+            <summary> 선언된 Id를 정규 표기(선언 당시 대소문자)로 되돌린다. 미선언이면 null </summary>
+        </member>
+        <member name="M:Translation.LanguageSet.GetFallbackChain(System.String)">
+            <summary> languageId부터 시작해 폴백을 따라간 조회 순서. 마지막은 항상 원문 언어다 </summary>
+        </member>
+        <member name="M:Translation.LanguageSet.FindByBcp47(System.String)">
+            <summary> BCP-47 태그로 언어를 찾는다. 정확히 일치하는 것이 없으면 앞부분(예: en-GB → en)으로 재시도 </summary>
+        </member>
+        <member name="T:Translation.TranslateEntry">
+            <summary> 번역 시트의 한 행. 키 하나에 대한 전 언어 값 </summary>
+        </member>
+        <member name="M:Translation.TranslateEntry.Resolve(Translation.LanguageSet,System.String)">
+            <summary> languageId부터 폴백 체인을 따라 처음 발견된 비지 않은 값을 반환한다 </summary>
+        </member>
+        <member name="T:Translation.TranslateKey">
+            <summary> 번역 슬롯 하나의 좌표. Table/Column이 비면 독립 UI 문자열 키다 </summary>
+        </member>
+        <member name="P:Translation.TranslateKey.Table">
+            <summary> 게임 DB 테이블명. 독립 UI 문자열이면 비어 있다 </summary>
+        </member>
+        <member name="P:Translation.TranslateKey.Column">
+            <summary> 번역 대상 컬럼명. 독립 UI 문자열이면 비어 있다 </summary>
+        </member>
+        <member name="P:Translation.TranslateKey.Id">
+            <summary> 데이터 행 식별자. 독립 UI 문자열이면 그 키 이름 자체 </summary>
+        </member>
+        <member name="P:Translation.TranslateKey.SubId">
+            <summary> 보조 식별자. 복합키 테이블에서만 쓰이고 없으면 비어 있다 </summary>
+        </member>
+        <member name="T:Translation.TranslationConfigException">
+            <summary> 설정이 잘못됐을 때 던진다. 사용자가 고칠 수 있는 오류 </summary>
+        </member>
+        <member name="T:Translation.TranslationBundleException">
+            <summary> 번들 데이터가 손상되거나 포맷 버전이 맞지 않을 때 던진다 </summary>
+        </member>
+        <member name="T:Translation.MissingKeyPolicy">
+            <summary> 키가 번들에 없을 때 무엇을 반환할지 </summary>
+        </member>
+        <member name="F:Translation.MissingKeyPolicy.ReturnMarkedKey">
+            <summary> 키 문자열 앞에 표시를 붙여 반환한다. 화면에서 눈에 띄므로 기본값이다 </summary>
+        </member>
+        <member name="F:Translation.MissingKeyPolicy.Throw">
+            <summary> 예외를 던진다. 테스트와 CI에서 쓴다 </summary>
+        </member>
+        <member name="T:Translation.TranslationCatalog">
+            <summary> 언어 번들 하나를 들고 키로 번역문을 찾는다 </summary>
+        </member>
+        <member name="P:Translation.TranslationCatalog.Manifest">
+            <summary> 번들을 만든 매니페스트. 없이도 동작하며 버전 보고용이다 </summary>
+        </member>
+        <member name="E:Translation.TranslationCatalog.OnMissingKey">
+            <summary> 키를 찾지 못할 때마다 호출된다 </summary>
+        </member>
+        <member name="M:Translation.TranslationCatalog.Format(System.String,System.Object[])">
+            <summary> 조회한 뒤 string.Format을 적용한다. 포맷이 깨지면 원문을 그대로 반환한다 </summary>
+        </member>
+        <member name="T:Translation.JsonGameDataSource">
+            <summary>
+            폴더 안의 {테이블}.json 을 읽는다. 루트가 오브젝트 배열이거나
+            오브젝트 안에 배열 하나가 든 꼴을 받는다. 루트에 없으면 하위 폴더를 찾는다
+            </summary>
+        </member>
+        <member name="T:Translation.SyncOptions">
+            <summary> sync 가 시트에 남기는 표식. 셀 앞에 붙는 마커와 상태 컬럼 값 </summary>
+        </member>
+        <member name="P:Translation.SyncOptions.ChangedMarker">
+            <summary> 원문이 바뀐 행의 기존 번역 앞에 붙인다 </summary>
+        </member>
+        <member name="P:Translation.SyncOptions.SuggestedMarker">
+            <summary> 같은 원문의 기존 번역을 복사해 온 셀 앞에 붙인다 </summary>
+        </member>
+        <member name="P:Translation.SyncOptions.StateColumn">
+            <summary> 상태를 적을 컬럼. 없으면 만들고, 비우면 상태를 안 적는다 </summary>
+        </member>
+        <member name="P:Translation.SyncOptions.Prune">
+            <summary> 게임 DB 에서 사라진 키의 행을 지운다. 기본은 StateRemoved 로 표시만 한다 </summary>
+        </member>
+        <member name="P:Translation.SyncOptions.DryRun">
+            <summary> 계산만 하고 시트에 쓰지 않는다 </summary>
+        </member>
+        <member name="T:Translation.SheetSyncResult">
+            <summary> 시트 하나의 sync 결과 </summary>
+        </member>
+        <member name="P:Translation.SheetSyncResult.Skipped">
+            <summary> 이 시트의 대상 중 원문 테이블이 하나도 없어 건너뛰었다 </summary>
+        </member>
+        <member name="P:Translation.SheetSyncResult.Suggested">
+            <summary> 신규 행 중 기존 번역을 추천으로 채운 행 </summary>
+        </member>
+        <member name="P:Translation.SheetSyncResult.Removed">
+            <summary> 게임 DB 에 없어 StateRemoved 로 표시한 행 </summary>
+        </member>
+        <member name="T:Translation.TranslationSynchronizer">
+            <summary>
+            게임 DB 의 원문으로 번역 시트를 최신화한다. 시트 단위로 돈다.
+            새 키는 행을 붙이고, 원문이 바뀐 키는 번역 앞에 마커를 붙이고,
+            사라진 키는 상태 컬럼에 표시한다 (Prune 이면 지운다).
+            팀이 둔 다른 컬럼과 행 순서는 그대로 두고,
+            원문 테이블이 없는 대상은 건너뛰어 그 키를 사라진 것으로 보지 않는다
+            </summary>
+        </member>
+        <member name="M:Translation.TranslationSynchronizer.Collect(Translation.TableTarget,System.String,Translation.IGameDataSource,System.String,System.Collections.Generic.List{System.Collections.Generic.KeyValuePair{Translation.TranslateKey,System.String}},System.Collections.Generic.Dictionary{Translation.TranslateKey,System.Int32},System.Collections.Generic.List{System.String})">
+            <summary> 대상 하나의 원문을 모은다. 원문 테이블이 없으면 false </summary>
+        </member>
+        <member name="T:Translation.PlaceholderSet">
+            <summary> 문자열에 들어 있는 string.Format 플레이스홀더 인덱스 집합 </summary>
+        </member>
+        <member name="M:Translation.PlaceholderSet.Extract(System.String)">
+            <summary> {0}, {1:N0} 같은 플레이스홀더의 인덱스를 뽑는다. 이스케이프된 {{ 는 무시한다 </summary>
+        </member>
+        <member name="T:Translation.TranslationValidator">
+            <summary> 읽어 들인 번역이 게임에 넣어도 안전한지 검사한다 </summary>
+        </member>
+        <member name="P:Translation.TranslationValidator.TreatMissingAsError">
+            <summary> 미번역을 Error로 볼지. 기본은 Warning이며 출시 전 CI에서만 올린다 </summary>
+        </member>
+        <member name="P:Translation.TranslationValidator.UnfinishedMarkers">
+            <summary> sync 가 붙인 마커. 이걸로 시작하는 번역은 아직 끝나지 않은 것으로 본다 </summary>
+        </member>
+        <member name="P:Translation.TranslationValidator.MissingSampleLimit">
+            <summary> 언어별로 리포트에 남길 미번역 샘플 개수 </summary>
+        </member>
+    </members>
+</doc>

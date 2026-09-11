@@ -81,7 +81,7 @@ token.json
 !/Translation.Sdk.sln
 !/Tools/**/*.csproj
 
-# Translation.Core.dll 은 dotnet build 가 패키지로 복사하고, 릴리스 때 CI 가 upm 브랜치에 넣는다
-/Packages/com.translation.unity/Runtime/Plugins/
-/Packages/com.translation.unity/Runtime/Plugins.meta
+# Translation.Core.dll 은 패키지에 커밋한다. git URL 설치가 태그의 파일을 그대로 쓰기 때문이다
+!/Packages/com.translation.unity/Runtime/Plugins/*.pdb
+!/Packages/com.translation.unity/Runtime/Plugins/*.pdb.meta
 !/Tools/Translation.Core/Unity/*.meta
